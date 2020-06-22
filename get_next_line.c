@@ -44,8 +44,10 @@ int	get_next_line(int fd, char **line)
 	static	char *rest;
 	char	*tmp;
 
+	if (fd < 0 || line == 0)
+		return (-1);
 	res_strchr = check_rest(rest, line); //или указатель на новую строку в остатке или NULL
-	while (!res_strchr && (read_bytes = read(fd, buf, BUFFER_SIZE)))
+	while (!res_strchr && ((read_bytes = read(fd, buf, BUFFER_SIZE)) != 0)
 	{
 		buf[read_bytes] = '\0';
 		if ((res_strchr = ft_strchr(buf, '\n')))
@@ -55,7 +57,8 @@ int	get_next_line(int fd, char **line)
 			rest = ft_strdup(res_strchr);
 		}
 		tmp = *line;
-		*line = ft_strjoin(*line, buf);
+		if (!(*line = ft_strjoin(*line, buf)) || read_bytes < 0)
+			return (-1);
 		free(tmp);
 	}
 	return ((read_bytes || ft_strlen(rest) || ft_strlen(*line)) ? 1 : 0);
