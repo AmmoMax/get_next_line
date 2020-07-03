@@ -20,6 +20,7 @@ char	*check_rest(char *rest, char **line)
 
 	res_strchr = NULL;
 	if (rest)
+	{
 		if ((res_strchr = ft_strchr(rest, '\n')))
 		{
 			*res_strchr = '\0';
@@ -31,6 +32,7 @@ char	*check_rest(char *rest, char **line)
 			*line = ft_strdup(rest);
 			ft_strclr(rest);
 		}
+	}
 	else
 		*line = ft_strnew(1);
 	return (res_strchr);
@@ -44,12 +46,17 @@ int	get_next_line(int fd, char **line)
 	static	char *rest;
 	char	*tmp;
 
-	if (fd < 0 || line == 0)
+	if (fd < 0 || line == 0 || (read(fd, buf, 0) < 0))
 		return (-1);
 	res_strchr = check_rest(rest, line); //или указатель на новую строку в остатке или NULL
-	while (!res_strchr && ((read_bytes = read(fd, buf, BUFFER_SIZE)) != 0))
+
+	while (!res_strchr && (read_bytes = read(fd, buf, BUFFER_SIZE)))
 	{
+
+		if (read_bytes == 0)
+			break ;
 		buf[read_bytes] = '\0';
+
 		if ((res_strchr = ft_strchr(buf, '\n')))
 		{
 			*res_strchr = '\0';
@@ -57,12 +64,11 @@ int	get_next_line(int fd, char **line)
 			rest = ft_strdup(res_strchr);
 		}
 		tmp = *line;
-		if (!(*line = ft_strjoin(*line, buf)) || read_bytes < 0)
+		if (!(*line = ft_strjoin(*line, buf)) || read_bytes < 0) // наверное надо убрать проверку на количество считанных байт, т.к. проверка уже есть в начале
 			return (-1);
 		free(tmp);
 	}
-	// free(*line);
-	// free(rest);
-	return ((read_bytes || ft_strlen(rest) || ft_strlen(*line)) ? 1 : 0);
+
+	return ((read_bytes || ft_strlen(rest) || res_strchr) ? 1 : 0);
 	// read_bytes !=0 - что то было прочитано или в rest != 0 - что то осталось, line length != 0 - 
 }
