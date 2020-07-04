@@ -24,17 +24,19 @@ char	*check_rest(char *rest, char **line)
 		if ((res_strchr = ft_strchr(rest, '\n')))
 		{
 			*res_strchr = '\0';
-			*line = ft_strdup(rest);
+			*line = ft_strdup(rest); // malloc for line
 			ft_strcpy(rest, ++res_strchr);
 		}
 		else
 		{
-			*line = ft_strdup(rest);
+			*line = ft_strdup(rest); //malloc for line
 			ft_strclr(rest);
+			printf("Freed rest\n");
+			free(rest);
 		}
 	}
 	else
-		*line = ft_strnew(1);
+		*line = ft_strnew(1); //malloc for line
 	return (res_strchr);
 }
 
@@ -52,23 +54,20 @@ int	get_next_line(int fd, char **line)
 
 	while (!res_strchr && (read_bytes = read(fd, buf, BUFFER_SIZE)))
 	{
-
-		if (read_bytes == 0)
-			break ;
 		buf[read_bytes] = '\0';
 
 		if ((res_strchr = ft_strchr(buf, '\n')))
 		{
 			*res_strchr = '\0';
 			res_strchr++;
-			rest = ft_strdup(res_strchr);
+			rest = ft_strdup(res_strchr); //malloc for rest
+			printf("addr rest = [%p]\n", &rest);
 		}
 		tmp = *line;
-		if (!(*line = ft_strjoin(*line, buf)) || read_bytes < 0) // наверное надо убрать проверку на количество считанных байт, т.к. проверка уже есть в начале
+		if (!(*line = ft_strjoin(*line, buf))) //malloc for line
 			return (-1);
 		free(tmp);
 	}
-
 	return ((read_bytes || ft_strlen(rest) || res_strchr) ? 1 : 0);
 	// read_bytes !=0 - что то было прочитано или в rest != 0 - что то осталось, line length != 0 - 
 }
