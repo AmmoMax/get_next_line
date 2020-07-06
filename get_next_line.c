@@ -31,8 +31,6 @@ char	*check_rest(char *rest, char **line)
 		{
 			*line = ft_strdup(rest); //malloc for line
 			ft_strclr(rest);
-			printf("Freed rest\n");
-			free(rest);
 		}
 	}
 	else
@@ -47,21 +45,21 @@ int	get_next_line(int fd, char **line)
 	char	*res_strchr;
 	static	char *rest;
 	char	*tmp;
+	char	*rest_tmp;
 
 	if (fd < 0 || line == 0 || (read(fd, buf, 0) < 0))
 		return (-1);
 	res_strchr = check_rest(rest, line); //или указатель на новую строку в остатке или NULL
-
 	while (!res_strchr && (read_bytes = read(fd, buf, BUFFER_SIZE)))
 	{
 		buf[read_bytes] = '\0';
-
 		if ((res_strchr = ft_strchr(buf, '\n')))
 		{
 			*res_strchr = '\0';
 			res_strchr++;
+			rest_tmp = rest;
 			rest = ft_strdup(res_strchr); //malloc for rest
-			printf("addr rest = [%p]\n", &rest);
+			free(rest_tmp);
 		}
 		tmp = *line;
 		if (!(*line = ft_strjoin(*line, buf))) //malloc for line
