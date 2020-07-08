@@ -6,15 +6,15 @@
 /*   By: amayor <amayor@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 21:56:05 by amayor            #+#    #+#             */
-/*   Updated: 2020/06/05 21:56:05 by amayor           ###   ########.fr       */
+/*   Updated: 2020/07/08 21:40:43 by amayor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *s)
+size_t		ft_strlen(const char *s)
 {
-	size_t len;
+	size_t	len;
 
 	len = 0;
 	if (!s)
@@ -27,8 +27,7 @@ size_t	ft_strlen(const char *s)
 	return (len);
 }
 
-
-char	*ft_strjoin(char const *s1, char const *s2)
+char		*ft_strjoin(char const *s1, char const *s2)
 {
 	size_t	i;
 	size_t	j;
@@ -56,9 +55,9 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (res);
 }
 
-char	*ft_strnew(size_t size)
+char		*ft_strnew(size_t size)
 {
-	char *res;
+	char	*res;
 
 	if (!(res = (char *)malloc(sizeof(char) * size + 1)))
 		return (NULL);
@@ -68,9 +67,9 @@ char	*ft_strnew(size_t size)
 	return (res);
 }
 
-char	*ft_strchr(const char *s, int c)
+char		*ft_strchr(const char *s, int c)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (s[i] != (char)c)
@@ -83,7 +82,7 @@ char	*ft_strchr(const char *s, int c)
 	return (char *)&s[i];
 }
 
-char	*ft_strdup(char *s)
+char		*ft_strdup(char *s)
 {
 	char	*res;
 	char	*res_start;
@@ -101,33 +100,4 @@ char	*ft_strdup(char *s)
 	}
 	*res = '\0';
 	return (res_start);
-}
-
-char	*ft_strcpy(char *dst, const char *src)
-{
-	size_t	i;
-
-	i = 0;
-	while (src[i])
-	{
-		dst[i] = src[i];
-		i++;
-	}
-	dst[i] = '\0';
-	return (dst);
-}
-
-void	ft_strclr(char *str)
-{
-	size_t i;
-
-	i = 0;
-	if(str)
-		while (str[i])
-		{
-			str[i] = '\0';
-			i++;
-		}
-			
-		
 }
