@@ -12,8 +12,6 @@
 
 #include "get_next_line.h"
 
-#include <stdio.h>
-
 char				*check_rest(char *rest, char **line)
 {
 	char			*res_strchr;
@@ -44,8 +42,7 @@ void				save_rest(char **rest, char *res_strchr)
 
 	rest_tmp = *rest;
 	*rest = ft_strdup(res_strchr);
-	// printf("free rest\n");
-	// free(rest_tmp);
+	free(rest_tmp);
 }
 
 void				ft_strclr(char *str)
@@ -85,7 +82,6 @@ int					get_next_line(int fd, char **line)
 
 	if (fd < 0 || line == 0 || (read(fd, buf, 0) < 0) || BUFFER_SIZE < 1)
 		return (-1);
-	printf("REST = [%s]\n", rest);
 	res_strchr = check_rest(rest, line);
 	while (!res_strchr && (read_bytes = read(fd, buf, BUFFER_SIZE)))
 	{
@@ -101,19 +97,5 @@ int					get_next_line(int fd, char **line)
 			return (-1);
 		free(tmp);
 	}
-	if (!read_bytes && !res_strchr && rest)
-	{
-		free(rest);
-		printf("FREE REST!\n");
-	}	
 	return ((read_bytes || res_strchr) ? 1 : 0);
 }
-
-
-/*
-1. Надо ли мерять длину rest в конце ГНЛ? Возможно и нет, стоит убрать ее нахер.
-2. Добавить проверку BUFFER_SIZE на 0
-3. Нет смысла передавать в save_rest адрес указателя на res_strchr, т.к она все равно не меняется. Можно передавать сразу указатель(сделано уже)
-4. Утечки возможно из за того что я не всегда (или вообще не) очищаю память под rest. Надо добавить очищение памяти для rest в основную функцию
-5. Проблема - не инициализируется ничем rest, возможно мусор
-*/
