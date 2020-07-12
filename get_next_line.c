@@ -6,11 +6,13 @@
 /*   By: amayor <amayor@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/08 15:57:30 by amayor            #+#    #+#             */
-/*   Updated: 2020/07/08 21:40:52 by amayor           ###   ########.fr       */
+/*   Updated: 2020/07/12 22:44:04 by amayor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+#include <stdio.h>
 
 char				*check_rest(char *rest, char **line)
 {
@@ -36,13 +38,14 @@ char				*check_rest(char *rest, char **line)
 	return (res_strchr);
 }
 
-void				save_rest(char **rest, char **res_strchr)
+void				save_rest(char **rest, char *res_strchr)
 {
 	char			*rest_tmp;
 
 	rest_tmp = *rest;
-	*rest = ft_strdup(*res_strchr);
-	free(rest_tmp);
+	*rest = ft_strdup(res_strchr);
+	// printf("free rest\n");
+	// free(rest_tmp);
 }
 
 void				ft_strclr(char *str)
@@ -80,8 +83,9 @@ int					get_next_line(int fd, char **line)
 	static	char	*rest;
 	char			*tmp;
 
-	if (fd < 0 || line == 0 || (read(fd, buf, 0) < 0) || BUFFER_SIZE < 0)
+	if (fd < 0 || line == 0 || (read(fd, buf, 0) < 0) || BUFFER_SIZE < 1)
 		return (-1);
+	printf("REST = [%s]\n", rest);
 	res_strchr = check_rest(rest, line);
 	while (!res_strchr && (read_bytes = read(fd, buf, BUFFER_SIZE)))
 	{
@@ -90,12 +94,26 @@ int					get_next_line(int fd, char **line)
 		{
 			*res_strchr = '\0';
 			res_strchr++;
-			save_rest(&rest, &res_strchr);
+			save_rest(&rest, res_strchr);
 		}
 		tmp = *line;
 		if (!(*line = ft_strjoin(*line, buf)))
 			return (-1);
 		free(tmp);
 	}
-	return ((read_bytes || ft_strlen(rest) || res_strchr) ? 1 : 0);
+	if (!read_bytes && !res_strchr && rest)
+	{
+		free(rest);
+		printf("FREE REST!\n");
+	}	
+	return ((read_bytes || res_strchr) ? 1 : 0);
 }
+
+
+/*
+1. Надо ли мерять длину rest в конце ГНЛ? Возможно и нет, стоит убрать ее нахер.
+2. Добавить проверку BUFFER_SIZE на 0
+3. Нет смысла передавать в save_rest адрес указателя на res_strchr, т.к она все равно не меняется. Можно передавать сразу указатель(сделано уже)
+4. Утечки возможно из за того что я не всегда (или вообще не) очищаю память под rest. Надо добавить очищение памяти для rest в основную функцию
+5. Проблема - не инициализируется ничем rest, возможно мусор
+*/
