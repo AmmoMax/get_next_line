@@ -6,7 +6,7 @@
 /*   By: amayor <amayor@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/08 15:57:30 by amayor            #+#    #+#             */
-/*   Updated: 2020/07/12 22:44:04 by amayor           ###   ########.fr       */
+/*   Updated: 2020/07/14 21:36:50 by amayor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int					get_next_line(int fd, char **line)
 	static	char	*rest;
 	char			*tmp;
 
-	if (fd < 0 || line == 0 || (read(fd, buf, 0) < 0) || BUFFER_SIZE < 1)
+	if (fd < 0 || !line || (read(fd, buf, 0) < 0) || BUFFER_SIZE < 1)
 		return (-1);
 	res_strchr = check_rest(rest, line);
 	while (!res_strchr && (read_bytes = read(fd, buf, BUFFER_SIZE)))
@@ -99,3 +99,12 @@ int					get_next_line(int fd, char **line)
 	}
 	return ((read_bytes || res_strchr) ? 1 : 0);
 }
+
+/*
+Что проверять:
+BUFFER_SIZE
+fd
+line
+возможность чтения из переданного fd
+
+*/
