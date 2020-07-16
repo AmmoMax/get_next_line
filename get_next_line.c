@@ -43,7 +43,8 @@ char				*check_rest(char *rest, char **line)
 void				save_rest(char **rest, char *res_strchr)
 {
 	// free(rest);
-	*rest = ft_strdup(res_strchr);
+	if(!(*rest = ft_strdup(res_strchr)))
+		return (-1);
 }
 
 void				ft_strclr(char *str)
