@@ -6,7 +6,7 @@
 /*   By: amayor <amayor@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 21:56:05 by amayor            #+#    #+#             */
-/*   Updated: 2020/07/12 23:29:42 by amayor           ###   ########.fr       */
+/*   Updated: 2020/07/14 21:57:02 by amayor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,18 +52,6 @@ char		*ft_strjoin(char const *s1, char const *s2)
 		j++;
 	}
 	res[i] = '\0';
-	return (res);
-}
-
-char		*ft_strnew(size_t size)
-{
-	char	*res;
-
-	if (!(res = (char *)malloc(sizeof(char) * size + 1)))
-		return (NULL);
-	res[size] = '\0';
-	while (size--)
-		res[size] = '\0';
 	return (res);
 }
 

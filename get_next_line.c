@@ -6,7 +6,7 @@
 /*   By: amayor <amayor@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/08 15:57:30 by amayor            #+#    #+#             */
-/*   Updated: 2020/07/14 21:36:50 by amayor           ###   ########.fr       */
+/*   Updated: 2020/07/16 10:13:03 by amayor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,27 +22,28 @@ char				*check_rest(char *rest, char **line)
 		if ((res_strchr = ft_strchr(rest, '\n')))
 		{
 			*res_strchr = '\0';
-			*line = ft_strdup(rest);
+			if(!(*line = ft_strdup(rest)))
+				return (-1);
 			ft_strcpy(rest, ++res_strchr);
 		}
 		else
 		{
-			*line = ft_strdup(rest);
-			ft_strclr(rest);
+			if(!(*line = ft_strdup(rest)))
+				return (-1);
+			free(rest);
+			// ft_strclr(rest);
 		}
 	}
 	else
-		*line = ft_strnew(1);
+		if(!(*line = ft_strdup("")))
+			return (-1);
 	return (res_strchr);
 }
 
 void				save_rest(char **rest, char *res_strchr)
 {
-	char			*rest_tmp;
-
-	rest_tmp = *rest;
+	// free(rest);
 	*rest = ft_strdup(res_strchr);
-	free(rest_tmp);
 }
 
 void				ft_strclr(char *str)
@@ -72,16 +73,40 @@ char				*ft_strcpy(char *dst, const char *src)
 	return (dst);
 }
 
+int					memory_free(char **s1, char **s2)
+{
+	if (*s1)
+	{
+		free(*s1);
+		*s1 = NULL;
+	}
+	if (*s2)
+	{
+		free(*s2);
+		*s2 = NULL;
+	}
+	return (-1);
+}
+
 int					get_next_line(int fd, char **line)
 {
-	char			buf[BUFFER_SIZE + 1];
+	char			*buf;
 	int				read_bytes;
 	char			*res_strchr;
 	static	char	*rest;
 	char			*tmp;
 
-	if (fd < 0 || !line || (read(fd, buf, 0) < 0) || BUFFER_SIZE < 1)
+	if (fd < 0 || !line || BUFFER_SIZE < 1)
 		return (-1);
+	if (!(buf = malloc((BUFFER_SIZE + 1) * sizeof(char))))
+		return (-1);
+		// return (memory_free(&buf, line));
+	if(read(fd, buf, 0) < 0)
+	{
+		free(buf);
+		return (-1);
+	}
+	read_bytes = 0;
 	res_strchr = check_rest(rest, line);
 	while (!res_strchr && (read_bytes = read(fd, buf, BUFFER_SIZE)))
 	{
@@ -97,14 +122,8 @@ int					get_next_line(int fd, char **line)
 			return (-1);
 		free(tmp);
 	}
+	free(buf);
+	// if (read_bytes == 0 && rest != 0)
+	// 	memory_free(&rest, &rest);
 	return ((read_bytes || res_strchr) ? 1 : 0);
 }
-
-/*
-Что проверять:
-BUFFER_SIZE
-fd
-line
-возможность чтения из переданного fd
-
-*/
