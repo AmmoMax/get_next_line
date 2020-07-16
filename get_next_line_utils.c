@@ -6,7 +6,7 @@
 /*   By: amayor <amayor@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 21:56:05 by amayor            #+#    #+#             */
-/*   Updated: 2020/07/14 21:57:02 by amayor           ###   ########.fr       */
+/*   Updated: 2020/07/16 19:14:32 by amayor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,4 +88,17 @@ char		*ft_strdup(char *s)
 	}
 	*res = '\0';
 	return (res_start);
+}
+
+void		ft_strclr(char *str)
+{
+	size_t			i;
+
+	i = 0;
+	if (str)
+		while (str[i])
+		{
+			str[i] = '\0';
+			i++;
+		}
 }
