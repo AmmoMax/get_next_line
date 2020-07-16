@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
 char				*check_rest(char *rest, char **line)
 {
@@ -22,29 +23,27 @@ char				*check_rest(char *rest, char **line)
 		if ((res_strchr = ft_strchr(rest, '\n')))
 		{
 			*res_strchr = '\0';
-			if(!(*line = ft_strdup(rest)))
-				return (-1);
+			*line = ft_strdup(rest);
 			ft_strcpy(rest, ++res_strchr);
 		}
 		else
 		{
-			if(!(*line = ft_strdup(rest)))
-				return (-1);
+			*line = ft_strdup(rest);
 			free(rest);
 			// ft_strclr(rest);
 		}
 	}
 	else
-		if(!(*line = ft_strdup("")))
-			return (-1);
+		*line = ft_strdup(rest);
 	return (res_strchr);
 }
 
-void				save_rest(char **rest, char *res_strchr)
+int				save_rest(char **rest, char *res_strchr)
 {
 	// free(rest);
 	if(!(*rest = ft_strdup(res_strchr)))
 		return (-1);
+	return (1);
 }
 
 void				ft_strclr(char *str)
@@ -108,6 +107,8 @@ int					get_next_line(int fd, char **line)
 		return (-1);
 	}
 	read_bytes = 0;
+
+
 	res_strchr = check_rest(rest, line);
 	while (!res_strchr && (read_bytes = read(fd, buf, BUFFER_SIZE)))
 	{
@@ -116,7 +117,8 @@ int					get_next_line(int fd, char **line)
 		{
 			*res_strchr = '\0';
 			res_strchr++;
-			save_rest(&rest, res_strchr);
+			if (save_rest(&rest, res_strchr) == -1)
+				return (-1);
 		}
 		tmp = *line;
 		if (!(*line = ft_strjoin(*line, buf)))
@@ -126,5 +128,10 @@ int					get_next_line(int fd, char **line)
 	free(buf);
 	// if (read_bytes == 0 && rest != 0)
 	// 	memory_free(&rest, &rest);
+	if(!read_bytes || !res_strchr)
+	{
+		free(rest);
+		rest = NULL;
+	}
 	return ((read_bytes || res_strchr) ? 1 : 0);
 }
