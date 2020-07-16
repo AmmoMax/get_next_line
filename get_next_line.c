@@ -29,12 +29,11 @@ char				*check_rest(char *rest, char **line)
 		else
 		{
 			*line = ft_strdup(rest);
-			free(rest);
-			// ft_strclr(rest);
+			ft_strclr(rest);
 		}
 	}
 	else
-		*line = ft_strdup(rest);
+		*line = ft_strdup("");
 	return (res_strchr);
 }
 
@@ -108,10 +107,11 @@ int					get_next_line(int fd, char **line)
 	}
 	read_bytes = 0;
 
-
+	// printf("\n\n1 rest = [[%s]]\n\n", rest);
 	res_strchr = check_rest(rest, line);
 	while (!res_strchr && (read_bytes = read(fd, buf, BUFFER_SIZE)))
 	{
+		// printf("read_bytes = [%d]\n", read_bytes);
 		buf[read_bytes] = '\0';
 		if ((res_strchr = ft_strchr(buf, '\n')))
 		{
@@ -127,9 +127,12 @@ int					get_next_line(int fd, char **line)
 	}
 	free(buf);
 	// if (read_bytes == 0 && rest != 0)
-	// 	memory_free(&rest, &rest);
-	if(!read_bytes || !res_strchr)
+		// free(rest);
+	// printf("\n\nrest = [[%s]]\n\n", rest);
+	// printf("2 read_bytes = [%d]\n", read_bytes);
+	if(read_bytes == 0 && !res_strchr)
 	{
+		// printf("***free rest\n");
 		free(rest);
 		rest = NULL;
 	}
