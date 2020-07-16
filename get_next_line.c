@@ -6,12 +6,11 @@
 /*   By: amayor <amayor@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/08 15:57:30 by amayor            #+#    #+#             */
-/*   Updated: 2020/07/16 22:12:24 by amayor           ###   ########.fr       */
+/*   Updated: 2020/07/16 22:26:50 by amayor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
 char				*check_rest(char *rest, char **line)
 {
@@ -37,6 +36,17 @@ char				*check_rest(char *rest, char **line)
 	return (res_strchr);
 }
 
+int					free_line(char **line, char **buf)
+{
+	char			*tmp;
+
+	tmp = *line;
+	if (!(*line = ft_strjoin(*line, *buf)))
+		return (-1);
+	free(tmp);
+	return (1);
+}
+
 char				*ft_strcpy(char *dst, const char *src)
 {
 	size_t			i;
@@ -52,9 +62,8 @@ char				*ft_strcpy(char *dst, const char *src)
 }
 
 int					check_buffer(int rb, char **res_strchr, \
-					char **buf, char **rest, char **line)
+					char **buf, char **rest)
 {
-	char			*tmp;
 	char			*buffer;
 
 	buffer = *buf;
@@ -66,10 +75,6 @@ int					check_buffer(int rb, char **res_strchr, \
 		if (!(*rest = ft_strdup(++(*res_strchr))))
 			return (-1);
 	}
-	tmp = *line;
-	if (!(*line = ft_strjoin(*line, *buf)))
-		return (-1);
-	free(tmp);
 	return (1);
 }
 
@@ -90,7 +95,8 @@ int					get_next_line(int fd, char **line)
 	read_bytes = 0;
 	res_strchr = check_rest(rest, line);
 	while (!res_strchr && (read_bytes = read(fd, b, BUFFER_SIZE)))
-		if (check_buffer(read_bytes, &res_strchr, &b, &rest, line) == -1)
+		if ((check_buffer(read_bytes, &res_strchr, &b, &rest) == -1) \
+											|| free_line(line, &b) == -1)
 			return (-1);
 	free(b);
 	if (read_bytes == 0 && !res_strchr)
@@ -99,5 +105,4 @@ int					get_next_line(int fd, char **line)
 		rest = NULL;
 	}
 	return ((read_bytes || res_strchr) ? 1 : 0);
-
 }
